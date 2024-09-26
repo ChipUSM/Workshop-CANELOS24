@@ -1,0 +1,14 @@
+VCD info: dumpfile tb_neuron_wxor.vcd opened for output.
+Time: 0 | tac_in: 0 | sign_x: 0 | sign_w: 0 | win:   0 | bias:   0 | dout:   0
+Time: 20 | tac_in: 1 | sign_x: 1 | sign_w: 1 | win: 150 | bias: 100 | dout:   0
+Time: 70 | tac_in: 1 | sign_x: 1 | sign_w: 0 | win: 200 | bias: 120 | dout:   0
+Time: 120 | tac_in: 1 | sign_x: 1 | sign_w: 1 | win: 255 | bias: 255 | dout: 255
+Time: 135 | tac_in: 1 | sign_x: 1 | sign_w: 1 | win: 255 | bias: 255 | dout:   0
+Time: 170 | tac_in: 1 | sign_x: 1 | sign_w: 1 | win: 180 | bias: 200 | dout:   0
+Time: 185 | tac_in: 1 | sign_x: 1 | sign_w: 1 | win: 180 | bias: 200 | dout:   1
+Time: 200 | tac_in: 1 | sign_x: 1 | sign_w: 1 | win: 180 | bias: 200 | dout: 255
+Time: 225 | tac_in: 1 | sign_x: 1 | sign_w: 1 | win: 180 | bias: 200 | dout:   0
+Time: 260 | tac_in: 1 | sign_x: 1 | sign_w: 1 | win:   0 | bias: 150 | dout:   0
+Time: 310 | tac_in: 1 | sign_x: 1 | sign_w: 1 | win: 100 | bias:   0 | dout:   0
+Time: 325 | tac_in: 1 | sign_x: 1 | sign_w: 1 | win: 100 | bias:   0 | dout:   1
+testbenches/tb_neuron_wxor.v:102: $finish called at 360 (1s)

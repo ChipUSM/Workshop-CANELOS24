@@ -1,0 +1,2 @@
+VCD info: dumpfile results/tb_tac_signed_wxor.vcd opened for output.
+testbenches/tb_tac_signed_wxor.v:92: $finish called at 360 (1s)

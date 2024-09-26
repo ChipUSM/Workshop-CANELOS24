@@ -1,0 +1,21 @@
+VCD info: dumpfile results/tb_dtc.vcd opened for output.
+Time: 0 | dtc_in:   0 | trig: 0 | dtc_out: 0
+Time: 20 | dtc_in:   5 | trig: 1 | dtc_out: 0
+Time: 30 | dtc_in:   5 | trig: 0 | dtc_out: 0
+Time: 35 | dtc_in:   5 | trig: 0 | dtc_out: 1
+Time: 85 | dtc_in:   5 | trig: 0 | dtc_out: 0
+Time: 90 | dtc_in:  50 | trig: 1 | dtc_out: 0
+Time: 100 | dtc_in:  50 | trig: 0 | dtc_out: 0
+Time: 105 | dtc_in:  50 | trig: 0 | dtc_out: 1
+Time: 605 | dtc_in:  50 | trig: 0 | dtc_out: 0
+Time: 620 | dtc_in: 255 | trig: 1 | dtc_out: 0
+Time: 630 | dtc_in: 255 | trig: 0 | dtc_out: 0
+Time: 635 | dtc_in: 255 | trig: 0 | dtc_out: 1
+Time: 3185 | dtc_in: 255 | trig: 0 | dtc_out: 0
+Time: 3200 | dtc_in: 100 | trig: 1 | dtc_out: 0
+Time: 3210 | dtc_in: 100 | trig: 0 | dtc_out: 0
+Time: 3215 | dtc_in: 100 | trig: 0 | dtc_out: 1
+Time: 3310 | dtc_in: 100 | trig: 0 | dtc_out: 0
+Time: 3320 | dtc_in:   0 | trig: 1 | dtc_out: 0
+Time: 3330 | dtc_in:   0 | trig: 0 | dtc_out: 0
+testbenches/tb_dtc.v:93: $finish called at 3450 (1s)

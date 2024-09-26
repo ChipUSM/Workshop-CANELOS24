@@ -1,0 +1,16 @@
+VCD info: dumpfile results/tb_dtc_wabs.vcd opened for output.
+Time: 0 | din:   0 | din_sign: 1 | dtc_out: 0
+Time: 20 | din:  50 | din_sign: 1 | dtc_out: 0
+Time: 35 | din:  50 | din_sign: 1 | dtc_out: 1
+Time: 535 | din:  50 | din_sign: 1 | dtc_out: 0
+Time: 630 | din: 206 | din_sign: 0 | dtc_out: 0
+Time: 645 | din: 206 | din_sign: 0 | dtc_out: 1
+Time: 1145 | din: 206 | din_sign: 0 | dtc_out: 0
+Time: 1240 | din: 100 | din_sign: 1 | dtc_out: 0
+Time: 1255 | din: 100 | din_sign: 1 | dtc_out: 1
+Time: 1300 | din: 100 | din_sign: 1 | dtc_out: 0
+Time: 1310 | din: 255 | din_sign: 0 | dtc_out: 0
+Time: 1325 | din: 255 | din_sign: 0 | dtc_out: 1
+Time: 1335 | din: 255 | din_sign: 0 | dtc_out: 0
+Time: 1420 | din:   0 | din_sign: 1 | dtc_out: 0
+testbenches/tb_dtc_wabs.v:89: $finish called at 1480 (1s)

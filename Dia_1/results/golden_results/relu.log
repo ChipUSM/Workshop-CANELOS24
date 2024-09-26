@@ -1,0 +1,9 @@
+VCD info: dumpfile results/tb_relu.vcd opened for output.
+Time: 0 | dout_msb: 000001 | dout_lsb: 000000000001 | dout_relu: 000001000000000001
+Time: 10 | dout_msb: 000001 | dout_lsb: 111111111111 | dout_relu: 000001111111111111
+Time: 20 | dout_msb: 100001 | dout_lsb: 000000000001 | dout_relu: 000000000000000000
+Time: 30 | dout_msb: 000000 | dout_lsb: 000000000000 | dout_relu: 000000000000000000
+Time: 40 | dout_msb: 011111 | dout_lsb: 111111111111 | dout_relu: 011111111111111111
+Time: 50 | dout_msb: 111111 | dout_lsb: 111111111111 | dout_relu: 000000000000000000
+Time: 60 | dout_msb: 100000 | dout_lsb: 000000000001 | dout_relu: 000000000000000000
+testbenches/tb_relu.v:63: $finish called at 70 (1s)
