@@ -1,0 +1,21 @@
+##### set the pdk to ihp
+set_pdk ihp-sg13g2
+
+#design specific 
+export ORFS_ROOT=$ORFS_DIR
+export OPENROAD_EXE=$(command -v openroad)
+export YOSYS_CMD=$(command -v yosys)
+export WORK_HOME=$(pwd)
+export IHP_PDK_ROOT=$PDK_ROOT
+export DESIGN_HOME=$WORK_HOME/designs
+export DESIGN_CONFIG=${DESIGN_HOME}/ihp-sg13g2/mac_8/config.mk
+#design specific 
+
+##### command to run the orfs
+#make -B -C $ORFS_ROOT/flow
+
+##### update the platform config.mk
+#sudo cp config.mk /opt/OpenROAD-flow-scripts/flow/platforms/ihp-sg13g2/
+
+##### change orfs owner 
+#sudo chown -R designer /opt/OpenROAD-flow-scripts
