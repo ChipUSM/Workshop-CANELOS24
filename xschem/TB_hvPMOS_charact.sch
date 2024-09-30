@@ -93,8 +93,8 @@ value="
 
 .param mult_M2 = 1200
 .param w_M2 =10u 
-.param l_M2 =0.22u
-*.param l_M2 =0.21u
+.param l_M2 =0.13u
+*.param l_M2 =0.2u
 
 .param mult_M3 = 1200
 .param w_M3 =10u 
@@ -107,7 +107,7 @@ value="
 + @n.xm3.nsg13_hv_pmos[vth]
 
 .control 
-dc Vds 0 3 0.01 Vgs 0.5 3 0.5
+dc Vds 0 3.3 0.01 Vgs 0.5 3.3 0.5
 *dc Vds 0 0.5 0.01 temp 0 27 1
 
 plot i(VdM1) i(VdM2) i(VdM3)
@@ -132,7 +132,7 @@ format="tcleval( @value )"
 value="
 .lib cornerMOShv.lib mos_tt
 "}
-C {vsource.sym} -600 -330 0 0 {name=Vdd value=3 savecurrent=false}
+C {vsource.sym} -600 -330 0 0 {name=Vdd value=3.3 savecurrent=false}
 C {lab_pin.sym} -600 -390 0 0 {name=p5 sig_type=std_logic lab=Vdd}
 C {lab_pin.sym} -720 -150 0 0 {name=p6 sig_type=std_logic lab=Vdd}
 C {ammeter.sym} -720 -120 0 0 {name=VdM1 savecurrent=true spice_ignore=0}

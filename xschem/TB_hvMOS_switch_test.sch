@@ -41,9 +41,9 @@ N 310 -440 310 -410 {
 lab=Vg_M2}
 N 310 -350 310 -330 {
 lab=GND}
-N 560 -440 560 -410 {
+N 390 -470 390 -440 {
 lab=Vg_M1}
-N 560 -350 560 -330 {
+N 390 -380 390 -360 {
 lab=GND}
 N 340 -190 340 -180 {
 lab=#net1}
@@ -82,7 +82,7 @@ spiceprefix=X
 }
 C {lab_pin.sym} 260 -80 0 0 {name=p8 sig_type=std_logic lab=Vg_M2}
 C {lab_pin.sym} 490 -210 0 0 {name=p1 sig_type=std_logic lab=Vg_M1}
-C {vsource.sym} 220 -380 0 0 {name=Vdd value=3 savecurrent=false}
+C {vsource.sym} 220 -380 0 0 {name=Vdd value=\{Vdd\} savecurrent=false}
 C {lab_pin.sym} 220 -440 0 0 {name=p5 sig_type=std_logic lab=Vdd}
 C {gnd.sym} 220 -330 0 0 {name=l2 lab=GND}
 C {lab_pin.sym} 570 -270 0 0 {name=p2 sig_type=std_logic lab=Vdd}
@@ -98,11 +98,15 @@ value="
 C {code.sym} -120 -260 0 0 {name=Simulation_Parameters only_toplevel=false 
 
 value="
+.param Vdd = 3.3
 .param R = 1.4
-.param VH = 3
+.param VH = 3.3
 .param D = 0.5
 .param T = 1u
-.param dt = 0.1u
+*.param dt = 0.1u
+.param TdR = 0.1u
+.param TdF = 0.1u
+.param Del = 0.5u
 .param temp = 27
 
 
@@ -114,20 +118,30 @@ value="
 .control
 reset
 set color0 = white
-tran 1n 4u
+tran 1n 1.5u
+let VsdM1 = v(Vdd) - v(Vc1)
+let VdsM2 = v(Vc2)
 plot i(VdM1) i(VdM2)
 plot v(Vc1) v(Vc2)
 plot v(Vg_M1) v(Vg_M2)
+plot VsdM1 VdsM2
+meas TRAN td_off_M1 TRIG v(Vg_M1) VAL=0.33 RISE=1 TARG VsdM1 VAL=0.33 RISE=1
+meas TRAN td_on_M1 TRIG v(Vg_M1) VAL=2.97 FALL=1 TARG VsdM1 VAL=2.97 FALL=1
+meas TRAN td_on_M2 TRIG v(Vg_M2) VAL=0.33 RISE=1 TARG VdsM2 VAL=2.97 FALL=1
+meas TRAN td_off_M2 TRIG v(Vg_M2) VAL=2.97 FALL=1 TARG VdsM2 VAL=0.33 RISE=1
+let TdR = td_off_M1 - td_on_M2 
+let TdF = td_on_M1 - td_off_M2
+print TdR TdF
 .endc
 
 .end
 "}
-C {vsource.sym} 310 -380 0 0 {name=Vg1 value="PULSE(0 \{VH\} \{dt\} 1n 1n \{T*D-2*dt\} \{T\} 0)" savecurrent=false}
-C {lab_pin.sym} 560 -440 0 0 {name=p4 sig_type=std_logic lab=Vg_M1}
+C {vsource.sym} 310 -380 0 0 {name=Vg1 value="PULSE(0 \{VH\} \{TdR+Del\} 1n 1n \{T*D-TdR-TdF\} \{T\} 0)" savecurrent=false}
+C {lab_pin.sym} 390 -470 0 0 {name=p4 sig_type=std_logic lab=Vg_M1}
 C {gnd.sym} 310 -330 0 0 {name=l4 lab=GND}
-C {vsource.sym} 560 -380 0 0 {name=Vg2 value="PULSE(0 \{VH\} 0 1n 1n \{T*D\} \{T\} 0)" savecurrent=false}
+C {vsource.sym} 390 -410 0 0 {name=Vg2 value="PULSE(0 \{VH\} Del 1n 1n \{T*D\} \{T\} 0)" savecurrent=false}
 C {lab_pin.sym} 310 -440 0 0 {name=p6 sig_type=std_logic lab=Vg_M2}
-C {gnd.sym} 560 -330 0 0 {name=l5 lab=GND}
+C {gnd.sym} 390 -360 0 0 {name=l5 lab=GND}
 C {res.sym} 340 -150 0 0 {name=R1
 value=\{R\}
 footprint=1206

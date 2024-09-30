@@ -118,13 +118,18 @@ value="
 + @n.xm1.nsg13_hv_nmos[vth]
 + @n.xm2.nsg13_hv_nmos[vth]
 + @n.xm3.nsg13_hv_nmos[vth]
++ @n.xm1.nsg13_hv_nmos[ad]
 
 .control 
 dc Vds 0 3 0.01 Vgs 0.5 3 0.5
 *dc Vds 0 0.5 0.01 temp 0 27 1
 write dc_hv_nmos.raw
+let Vth_M1 = @n.xm1.nsg13_hv_nmos[vth]
+let Id_M1 = i(VdM1)
 plot i(VdM1) i(VdM2) i(VdM3)
-print @n.xm1.nsg13_hv_nmos[vth] @n.xm2.nsg13_hv_nmos[vth]
+plot Id_M1
+plot Vth_M1 Vth_M1*2
+print @n.xm1.nsg13_hv_nmos[vth] @n.xm2.nsg13_hv_nmos[vth] Vth_M1
 *print @n.xm2.nsg13_hv_nmos[vth]
 write test_nmos.raw
 

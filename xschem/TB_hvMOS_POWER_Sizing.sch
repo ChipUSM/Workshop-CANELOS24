@@ -23,15 +23,11 @@ N -580 -290 -510 -290 {
 lab=GND}
 N -510 -420 -510 -390 {
 lab=Vdd}
-N -700 -50 -700 10 {
-lab=GND}
 N -700 -110 -670 -110 {
 lab=GND}
 N -670 -110 -670 -50 {
 lab=GND}
 N -700 -50 -670 -50 {
-lab=GND}
-N -700 -80 -700 -50 {
 lab=GND}
 N -700 -150 -700 -140 {
 lab=#net1}
@@ -59,12 +55,16 @@ N -750 -330 -750 -290 {
 lab=GND}
 N -750 -420 -750 -390 {
 lab=Vd_p}
+N -700 -50 -700 -40 {
+lab=GND}
+N -700 -80 -700 -50 {
+lab=GND}
 C {vsource.sym} -660 -360 0 0 {name=Vgs value=1.5 savecurrent=false}
-C {vsource.sym} -580 -360 0 0 {name=Vds value=3 savecurrent=false}
+C {vsource.sym} -580 -360 0 0 {name=Vds value=3.3 savecurrent=false}
 C {lab_pin.sym} -580 -420 0 0 {name=p1 sig_type=std_logic lab=Vd}
 C {lab_pin.sym} -660 -420 0 0 {name=p4 sig_type=std_logic lab=Vg}
 C {gnd.sym} -660 -270 0 0 {name=l2 lab=GND}
-C {vsource.sym} -510 -360 0 0 {name=Vdd value=3 savecurrent=false}
+C {vsource.sym} -510 -360 0 0 {name=Vdd value=3.3 savecurrent=false}
 C {lab_pin.sym} -510 -420 0 0 {name=p5 sig_type=std_logic lab=Vdd}
 C {code_shown.sym} -1130 -420 0 0 {name=MODEL only_toplevel=true
 format="tcleval( @value )"
@@ -75,39 +75,58 @@ C {devices/code.sym} -1130 -160 0 0 {name=DC_sweep_simulation only_toplevel=fals
 value="
 .save all
 * + @M.XM1.m1[id]
-+ @n.xm1.nsg13_hv_nmos[vth]
-+ @n.xm2.nsg13_hv_pmos[vth]
++ @n.xm1.nsg13_hv_pmos[vth]
++ @n.xm1.nsg13_hv_pmos[ad]
++ @n.xm2.nsg13_hv_nmos[vth]
 
 .control
 reset 
-alter Vgs 3
+alter Vgs 3.3
 dc Vds 0 1 0.01 
 *dc Vds 0 0.5 0.01 temp 0 27 1
+let Vds_M2 = v(Vd) 
+plot i(VdM2) vs Vds_M2
 
-plot i(VdM2)
-
-print @n.xm1.nsg13_hv_nmos[vth] 
-*print @n.xm2.nsg13_hv_nmos[vth]
+*meas DC Ron_M2 DERIV i(VdM2) AT=0.2
+let I_M2 = i(VdM2)
+let G_M2 = deriv(I_M2)
+let Ron_M2 = 1/G_M2
+plot Ron_M2
+let VthM1_off =  @n.xm1.nsg13_hv_pmos[vth]  
+let VthM2 =  @n.xm2.nsg13_hv_nmos[vth]
+*plot VthM1_off
+*plot VthM2
 .endc
 
 .control
 reset 
 alter Vgs 0
-dc Vds1 2 3 0.01 
-*dc Vds 0 0.5 0.01 temp 0 27 1
+dc Vds1 2 3.3 0.01 
+*dc Vds 2 3.3 0.01 temp 0 27 1
 
 plot i(VdM1)
-
-print @n.xm2.nsg13_hv_pmos[vth]
+let I_M1 = i(VdM1)
+let G_M1 = deriv(I_M1)
+let Ron_M1 = -1/G_M1
+let Vsd_M1 = v(Vdd) -v(Vd_p)
+plot Ron_M1 vs Vsd_M1
+let VthM1_on = @n.xm1.nsg13_hv_pmos[vth]
+*plot VthM1_on
 .endc
 
 .control 
 reset
-alter Vgs 3
-dc Vds1 0 3 0.01 
+alter Vgs 3.3
+dc Vds1 0 3.3 0.01 
 plot i(VdM1)
+let I_M1 = i(VdM1)
+let G_M1 = deriv(I_M1)
+let Ron_M1_subth = 1/G_M1
+plot Ron_M1_subth
 
-print @n.xm2.nsg13_hv_pmos[vth]
+let VthM1_subth = @n.xm1.nsg13_hv_pmos[vth]
+*plot VthM1_subth
+.endc
 .end
 "}
 C {sg13g2_pr/sg13_hv_nmos.sym} -720 -110 2 1 {name=M2
@@ -118,7 +137,7 @@ m=\{mult_M2\}
 model=sg13_hv_nmos
 spiceprefix=X
 }
-C {gnd.sym} -700 10 0 0 {name=l1 lab=GND}
+C {gnd.sym} -700 -40 0 0 {name=l1 lab=GND}
 C {lab_pin.sym} -700 -230 0 0 {name=p2 sig_type=std_logic lab=Vd}
 C {ammeter.sym} -480 -200 0 0 {name=VdM1 savecurrent=true spice_ignore=0}
 C {ngspice_get_value.sym} -770 -60 0 0 {name=r6 node=v(@n.xm1.nsg13_hv_nmos[vth])
