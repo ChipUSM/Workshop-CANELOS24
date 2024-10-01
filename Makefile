@@ -2,7 +2,6 @@ all: print
 
 PDK=ihp-sg13g2
 SHARED_DIR=$(abspath ./)
-DEV=Y
 
 ifeq (,$(DEV))
 DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
