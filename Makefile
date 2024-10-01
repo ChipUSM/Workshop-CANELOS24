@@ -7,8 +7,8 @@ ifeq (,$(DEV))
 DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
 STAGE=usm-vlsi-tools
 else
-DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:temp
-STAGE=usm-vlsi-tools-temp
+DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:dev
+STAGE=usm-vlsi-tools
 endif
 
 
@@ -24,9 +24,13 @@ endif
 ################################
 ifeq (Windows_NT,$(OS))
 
+SHARED_DIR_HASH := $(shell echo | set /p="$(SHARED_DIR)" > %TMP%/hash.txt | certutil -hashfile %TMP%/hash.txt SHA256 | findstr /v "hash")
+CONTAINER_NAME  := usm-vlsi-tools-$(SHARED_DIR_HASH)
+CONTAINER_ID    := $(shell docker container ls -a -q -f "name=$(CONTAINER_NAME)")
+
 USER_ID=1000
 USER_GROUP=1000
-DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
+DOCKER_RUN=docker run -it $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
 	--user $(USER_ID):$(USER_GROUP) \
 	-e SHELL=/bin/bash \
@@ -35,10 +39,11 @@ DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	-e LIBGL_ALWAYS_INDIRECT=1 \
 	-e XDG_RUNTIME_DIR \
 	-e PULSE_SERVER \
-	-p 8888:8888
+	-p 8888:8888 \
+	--name $(CONTAINER_NAME)
 
-_XSERVER_EXISTS:=$(shell powershell -noprofile Get-Process vcxsrv -ErrorAction SilentlyContinue)
-START_XSERVER=powershell -noprofile vcxsrv.exe :0 -multiwindow -clipboard -primary -wgl
+_XSERVER_EXISTS := $(shell powershell -noprofile Get-Process vcxsrv -ErrorAction SilentlyContinue)
+START_XSERVER   := powershell -noprofile vcxsrv.exe :0 -multiwindow -clipboard -primary -wgl
 
 else
 
@@ -48,11 +53,15 @@ USER_GROUP=$(shell id -g)
 
 # Linux Specific Configuration
 ##############################
-ifeq ($(UNAME_S),Linux)
+ifeq (Linux,$(UNAME_S))
+
+SHARED_DIR_HASH := $(shell echo -n $(SHARED_DIR) | md5sum | awk '{print $$1}')
+CONTAINER_NAME  := usm-vlsi-tools-$(SHARED_DIR_HASH)
+CONTAINER_ID    := $(shell docker container ls -a -q -f "name=$(CONTAINER_NAME)")
 
 # Since it uses local xserver, --net=host is required and DISPLAY should be equal to host
 
-DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
+DOCKER_RUN=docker run -it $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
 	-v /tmp/.X11-unix:/tmp/.X11-unix:ro \
 	-v /home/$(USER)/.Xauthority:/root/.Xauthority:rw \
@@ -65,7 +74,8 @@ DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	-e XDG_RUNTIME_DIR \
 	-e PULSE_SERVER \
 	-e USER_ID=$(USER_ID) \
-	-e USER_GROUP=$(USER_GROUP)
+	-e USER_GROUP=$(USER_GROUP) \
+	--name $(CONTAINER_NAME)
 
 # _XSERVER_EXISTS and START_XSERVER are not required
 
@@ -73,7 +83,7 @@ endif
 
 # Mac Specific Configuration
 ############################
-ifeq ($(UNAME_S),Darwin)
+ifeq (Darwin,$(UNAME_S))
 
 DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
@@ -103,6 +113,8 @@ print:
 	@echo DOCKER_IMAGE_TAG ........ $(DOCKER_IMAGE_TAG)
 	@echo DEV ..................... $(DEV)
 	@echo SHARED_DIR .............. $(SHARED_DIR)
+	@echo CONTAINER_NAME........... $(CONTAINER_NAME)
+	@echo CONTAINER_ID............. $(CONTAINER_ID)
 	@echo OS ...................... $(OS)
 	@echo UNAME_S ................. $(UNAME_S)
 	@echo STAGE ................... $(STAGE)
@@ -114,9 +126,9 @@ print:
 
 build:
 ifeq (,$(STAGE))
-	BUILDKIT_PROGRESS=plain docker build $(_DOCKER_NO_CACHE) -t $(DOCKER_IMAGE_TAG) . 
+	BUILDKIT_PROGRESS=plain docker build $(_DOCKER_NO_CACHE) -t $(DOCKER_IMAGE_TAG) .
 else
-	BUILDKIT_PROGRESS=plain docker build $(_DOCKER_NO_CACHE) -t $(DOCKER_IMAGE_TAG) --target $(STAGE) . 
+	BUILDKIT_PROGRESS=plain docker build $(_DOCKER_NO_CACHE) -t $(DOCKER_IMAGE_TAG) --target $(STAGE) .
 endif
 	docker image ls $(DOCKER_IMAGE_TAG)
 
@@ -128,16 +140,18 @@ endif
 
 
 start: xserver pull
+	$(DOCKER_RUN) --rm $(DOCKER_IMAGE_TAG)
+
+attach: xserver pull
+ifeq (,$(CONTAINER_ID))
 	$(DOCKER_RUN) $(DOCKER_IMAGE_TAG)
+else
+	docker container start -ai $(CONTAINER_ID)
+endif
 
 
 start-raw:
 	docker run -it --rm $(_DOCKER_ROOT_USER) $(DOCKER_IMAGE_TAG)
-
-
-# Avoid the pull of start
-start-latest: build
-	$(DOCKER_RUN) $(DOCKER_IMAGE_TAG)
 
 
 # Some flags that might be useful
@@ -160,4 +174,10 @@ push:
 pull:
 ifeq (,$(NO_PULL))
 	docker image pull $(DOCKER_IMAGE_TAG)
+endif
+
+
+rm:
+ifneq (,$(CONTAINER_ID))
+	docker container rm $(CONTAINER_ID)
 endif
