@@ -39,5 +39,5 @@ C {TB_hvMOS_POWER_Sizing.sym} -4200 -580 0 0 {name=X3}
 C {TB_DCDCBuck.sym} -4200 -480 0 0 {name=X5}
 C {title.sym} -4260 -330 0 0 {name=l1 author="Andrés Martínez"}
 C {TB_hvMOS_switch_test.sym} -4200 -530 0 0 {name=X6}
-C {/workspaces/usm-vlsi-tools/Workshop-CANELOS24/xschem/TB_hvPMOS_cgate-ext.sym} -3870 -700 0 0 {name=X10}
-C {/workspaces/usm-vlsi-tools/Workshop-CANELOS24/xschem/TB_hvNMOS_cgate_ext.sym} -3870 -750 0 0 {name=X9}
+C {TB_hvPMOS_cgate-ext.sym} -3870 -700 0 0 {name=X10}
+C {TB_hvNMOS_cgate_ext.sym} -3870 -750 0 0 {name=X9}

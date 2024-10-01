@@ -1,0 +1,79 @@
+** sch_path: /home/designer/shared/Workshop-CANELOS24/xschem/TB_hvPMOS_charact.sch
+**.subckt TB_hvPMOS_charact
+XM1 Vd Vg net1 net1 sg13_hv_pmos w={w_M1} l={l_M1} ng=1 m={mult_M1}
+Vg Vg GND 0
+Vd Vd GND 3.3
+Vdd Vdd GND 3.3
+VdM1 Vdd net1 0
+.save i(vdm1)
+XM2 Vd Vg net2 net2 sg13_hv_pmos w={w_M2} l={l_M2} ng=1 m={mult_M2}
+VdM2 Vdd net2 0
+.save i(vdm2)
+XM3 Vd Vg net3 net3 sg13_hv_pmos w={w_M3} l={l_M3} ng=1 m={mult_M3}
+VdM3 Vdd net3 0
+.save i(vdm3)
+**** begin user architecture code
+
+
+.param temp=27
+.param mult_M1 = 1200
+.param w_M1 =10u
+.param l_M1 =0.13u
+
+.param mult_M2 = 1200
+.param w_M2 =10u
+.param l_M2 =0.22u
+
+.param mult_M3 = 1200
+.param w_M3 =10u
+.param l_M3 =0.3u
+
+.save all
+* + @M.XM1.m1[id]
++ @n.xm1.nsg13_hv_pmos[vth]
++ @n.xm1.nsg13_hv_pmos[gds]
++ @n.xm2.nsg13_hv_pmos[vth]
++ @n.xm2.nsg13_hv_pmos[gds]
++ @n.xm3.nsg13_hv_pmos[vth]
++ @n.xm3.nsg13_hv_pmos[gds]
+
+.control
+*dc Vd 0 3.3 0.01 Vg 0.5 3.3 0.5
+*dc Vd 0 0.5 0.01 temp 0 27 1
+dc Vd 0 3.3 0.01
+
+let Vsd = v(Vdd) - v(Vd)
+let G_M1 = @n.xm1.nsg13_hv_pmos[gds]
+let G_M2 = @n.xm2.nsg13_hv_pmos[gds]
+let G_M3 = @n.xm3.nsg13_hv_pmos[gds]
+let Ron_M1 = 1/G_M1
+let Ron_M2 = 1/G_M2
+let Ron_M3 = 1/G_M3
+
+plot i(VdM1) i(VdM2) i(VdM3) vs Vsd
+plot Ron_M1 Ron_M2 Ron_M3 vs Vsd
+*plot i(VdM1) i(VdM2) vs Vsd
+
+*plot @n.xm1.nsg13_hv_pmos[vth] @n.xm2.nsg13_hv_pmos[vth] @n.xm3.nsg13_hv_pmos[vth]
+*print @n.xm2.nsg13_hv_nmos[vth]
+write test_pmos.raw
+.endc
+
+
+.control
+reset
+alter Vd 0
+dc Vg 2 3.3 0.01
+let Vsg = v(Vdd) - v(Vg)
+plot i(VdM1) i(VdM2) i(VdM3) vs Vsg
+.endc
+
+
+
+
+.lib cornerMOShv.lib mos_tt
+
+**** end user architecture code
+**.ends
+.GLOBAL GND
+.end

@@ -33,7 +33,7 @@ N -350 -300 -350 -280 {
 lab=Vdd}
 N -350 -240 -350 -220 {
 lab=#net1}
-C {/workspaces/usm-vlsi-tools/shared_xserver/simulations/IHP-sg13g2/Simulaciones/Modulos/DCDC_Buck.sym} -340 -160 0 0 {name=X1}
+C {Modulos/DCDC_Buck.sym} -340 -160 0 0 {name=X1}
 C {lab_pin.sym} -350 -298 0 0 {name=p1 sig_type=std_logic lab=Vdd}
 C {lab_pin.sym} -454 -200 0 0 {name=p2 sig_type=std_logic lab=Vg_M1}
 C {lab_pin.sym} -454 -160 0 0 {name=p3 sig_type=std_logic lab=Vg_M2}
