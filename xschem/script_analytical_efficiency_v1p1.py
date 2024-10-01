@@ -19,8 +19,6 @@ RonP = 100e-3#[mOhm]
 RonN = 100e-3#[mOhm]
 RLdc = 0e-3#[mOhm]
 Vdd = 3.3#[V]
-#sw = [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36]
-#frq=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
 Pout_ps = Vout*Iload
 print('Pout_ps = ',Pout_ps)
