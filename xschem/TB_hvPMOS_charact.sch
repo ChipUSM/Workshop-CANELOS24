@@ -77,8 +77,8 @@ spiceprefix=X
 }
 C {lab_pin.sym} -720 40 0 0 {name=p2 sig_type=std_logic lab=Vd}
 C {lab_pin.sym} -800 -30 0 0 {name=p3 sig_type=std_logic lab=Vg}
-C {vsource.sym} -750 -330 0 0 {name=Vgs value=1.5 savecurrent=false}
-C {vsource.sym} -670 -330 0 0 {name=Vds value=3 savecurrent=false}
+C {vsource.sym} -750 -330 0 0 {name=Vg value=0 savecurrent=false}
+C {vsource.sym} -670 -330 0 0 {name=Vd value=3.3 savecurrent=false}
 C {lab_pin.sym} -670 -390 0 0 {name=p1 sig_type=std_logic lab=Vd}
 C {lab_pin.sym} -750 -390 0 0 {name=p4 sig_type=std_logic lab=Vg}
 C {gnd.sym} -750 -240 0 0 {name=l2 lab=GND}
@@ -88,32 +88,43 @@ value="
 .param temp=27
 .param mult_M1 = 1200
 .param w_M1 =10u 
-*.param l_M1 =0.25u
-.param l_M1 =0.2u
+.param l_M1 =0.13u
 
 .param mult_M2 = 1200
 .param w_M2 =10u 
-.param l_M2 =0.13u
-*.param l_M2 =0.2u
+.param l_M2 =0.22u
 
 .param mult_M3 = 1200
 .param w_M3 =10u 
-.param l_M3 =0.35u
+.param l_M3 =0.3u
 
 .save all
 * + @M.XM1.m1[id]
 + @n.xm1.nsg13_hv_pmos[vth]
++ @n.xm1.nsg13_hv_pmos[gds]
 + @n.xm2.nsg13_hv_pmos[vth]
++ @n.xm2.nsg13_hv_pmos[gds]
 + @n.xm3.nsg13_hv_pmos[vth]
++ @n.xm3.nsg13_hv_pmos[gds]
 
 .control 
-dc Vds 0 3.3 0.01 Vgs 0.5 3.3 0.5
-*dc Vds 0 0.5 0.01 temp 0 27 1
+*dc Vd 0 3.3 0.01 Vg 0.5 3.3 0.5
+*dc Vd 0 0.5 0.01 temp 0 27 1
+dc Vd 0 3.3 0.01 
 
-plot i(VdM1) i(VdM2) i(VdM3)
-plot i(VdM1) i(VdM2)
+let Vsd = v(Vdd) - v(Vd)
+let G_M1 = @n.xm1.nsg13_hv_pmos[gds]
+let G_M2 = @n.xm2.nsg13_hv_pmos[gds]
+let G_M3 = @n.xm3.nsg13_hv_pmos[gds]
+let Ron_M1 = 1/G_M1
+let Ron_M2 = 1/G_M2
+let Ron_M3 = 1/G_M3
 
-print @n.xm1.nsg13_hv_pmos[vth] @n.xm2.nsg13_hv_pmos[vth] @n.xm3.nsg13_hv_pmos[vth]
+plot i(VdM1) i(VdM2) i(VdM3) vs Vsd
+plot Ron_M1 Ron_M2 Ron_M3 vs Vsd
+*plot i(VdM1) i(VdM2) vs Vsd
+
+*plot @n.xm1.nsg13_hv_pmos[vth] @n.xm2.nsg13_hv_pmos[vth] @n.xm3.nsg13_hv_pmos[vth]
 *print @n.xm2.nsg13_hv_nmos[vth]
 write test_pmos.raw
 .endc
@@ -121,9 +132,10 @@ write test_pmos.raw
 
 .control
 reset
-alter Vds 0 
-dc Vgs 2 3.3 0.01 
-plot i(VdM1) i(VdM2) i(VdM3)
+alter Vd 0 
+dc Vg 2 3.3 0.01 
+let Vsg = v(Vdd) - v(Vg)
+plot i(VdM1) i(VdM2) i(VdM3) vs Vsg
 .endc
 
 "}

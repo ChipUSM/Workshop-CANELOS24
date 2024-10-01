@@ -59,7 +59,7 @@ N -700 -50 -700 -40 {
 lab=GND}
 N -700 -80 -700 -50 {
 lab=GND}
-C {vsource.sym} -660 -360 0 0 {name=Vgs value=1.5 savecurrent=false}
+C {vsource.sym} -660 -360 0 0 {name=Vg value=3.3 savecurrent=false}
 C {vsource.sym} -580 -360 0 0 {name=Vds value=3.3 savecurrent=false}
 C {lab_pin.sym} -580 -420 0 0 {name=p1 sig_type=std_logic lab=Vd}
 C {lab_pin.sym} -660 -420 0 0 {name=p4 sig_type=std_logic lab=Vg}
@@ -76,53 +76,64 @@ value="
 .save all
 * + @M.XM1.m1[id]
 + @n.xm1.nsg13_hv_pmos[vth]
++ @n.xm1.nsg13_hv_pmos[gds]
 + @n.xm1.nsg13_hv_pmos[ad]
 + @n.xm2.nsg13_hv_nmos[vth]
++ @n.xm2.nsg13_hv_nmos[gds]
 
 .control
 reset 
-alter Vgs 3.3
-dc Vds 0 1 0.01 
+alter Vg 3.3
+dc Vds 0 0.5 0.01 
 *dc Vds 0 0.5 0.01 temp 0 27 1
 let Vds_M2 = v(Vd) 
 plot i(VdM2) vs Vds_M2
 
-*meas DC Ron_M2 DERIV i(VdM2) AT=0.2
-let I_M2 = i(VdM2)
-let G_M2 = deriv(I_M2)
+let G_M2 = @n.xm2.nsg13_hv_nmos[gds]
 let Ron_M2 = 1/G_M2
-plot Ron_M2
-let VthM1_off =  @n.xm1.nsg13_hv_pmos[vth]  
-let VthM2 =  @n.xm2.nsg13_hv_nmos[vth]
+let I_M2 = i(VdM2)
+let G_M22 = deriv(I_M2)
+let Ron_M22 = 1/G_M22
+
+plot Ron_M2 vs Vds_M2
+
+*let VthM1_off =  @n.xm1.nsg13_hv_pmos[vth]  
+*let VthM2 =  @n.xm2.nsg13_hv_nmos[vth]
 *plot VthM1_off
 *plot VthM2
 .endc
 
 .control
 reset 
-alter Vgs 0
-dc Vds1 2 3.3 0.01 
-*dc Vds 2 3.3 0.01 temp 0 27 1
+alter Vg 0
+dc Vd_M1 2.5 3.3 0.01 
+*dc Vd_M1 2 3.3 0.01 temp 0 27 1
 
-plot i(VdM1)
-let I_M1 = i(VdM1)
-let G_M1 = deriv(I_M1)
-let Ron_M1 = -1/G_M1
 let Vsd_M1 = v(Vdd) -v(Vd_p)
+plot i(VdM1) vs Vsd_M1
+let G_M1 = @n.xm1.nsg13_hv_pmos[gds]
+let Ron_M1 = 1/G_M1
+let I_M1 = i(VdM1)
+let G_M11 = deriv(I_M1)
+let Ron_M11 = -1/G_M11
+
 plot Ron_M1 vs Vsd_M1
-let VthM1_on = @n.xm1.nsg13_hv_pmos[vth]
+
+*plot Ron_M11 
+*plot Ron_M11 vs Vsd_M1
+*let VthM1_on = @n.xm1.nsg13_hv_pmos[vth]
 *plot VthM1_on
 .endc
 
 .control 
 reset
-alter Vgs 3.3
-dc Vds1 0 3.3 0.01 
-plot i(VdM1)
+alter Vg 3.3
+dc Vd_M1 0 3.3 0.01 
+let Vsd_M1 = v(Vdd) -v(Vd_p)
+*plot i(VdM1) vs Vsd_M1
+let G_M1 = @n.xm1.nsg13_hv_pmos[gds]
 let I_M1 = i(VdM1)
-let G_M1 = deriv(I_M1)
-let Ron_M1_subth = 1/G_M1
-plot Ron_M1_subth
+
 
 let VthM1_subth = @n.xm1.nsg13_hv_pmos[vth]
 *plot VthM1_subth
@@ -155,7 +166,7 @@ C {lab_pin.sym} -480 -40 0 0 {name=p7 sig_type=std_logic lab=Vd_p}
 C {lab_pin.sym} -560 -110 0 0 {name=p8 sig_type=std_logic lab=Vg}
 C {lab_pin.sym} -480 -230 0 0 {name=p9 sig_type=std_logic lab=Vdd}
 C {ammeter.sym} -700 -180 0 0 {name=VdM2 savecurrent=true spice_ignore=0}
-C {vsource.sym} -750 -360 0 0 {name=Vds1 value=3 savecurrent=false}
+C {vsource.sym} -750 -360 0 0 {name=Vd_M1 value=3.3 savecurrent=false}
 C {lab_pin.sym} -750 -420 0 0 {name=p6 sig_type=std_logic lab=Vd_p}
 C {code.sym} -1130 -330 0 0 {name=POWER_MOS_Parameters only_toplevel=false 
 
@@ -169,7 +180,6 @@ value="
 
 .param mult_M2 = 1200
 .param w_M2 =10u 
-*.param l_M2 =0.25u
 .param l_M2 =0.25u
 .param ng_M2 =1
 

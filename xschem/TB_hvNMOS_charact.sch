@@ -93,7 +93,7 @@ m=\{mult_M1\}
 model=sg13_hv_nmos
 spiceprefix=X
 }
-C {vsource.sym} -210 -430 0 0 {name=Vgs value=1.5 savecurrent=false}
+C {vsource.sym} -210 -430 0 0 {name=Vgs value=3.3 savecurrent=false}
 C {vsource.sym} -130 -430 0 0 {name=Vds value=3 savecurrent=false}
 C {gnd.sym} -490 60 0 0 {name=l1 lab=GND}
 C {code_shown.sym} 190 -160 0 0 {name=Simulation only_toplevel=false 
@@ -102,7 +102,6 @@ value="
 .param temp=27
 .param mult_M1 = 1200
 .param w_M1 =10u 
-*.param l_M1 =0.25u
 .param l_M1 =0.22u
 
 .param mult_M2 = 1200
@@ -116,20 +115,34 @@ value="
 .save all
 * + @M.XM1.m1[id]
 + @n.xm1.nsg13_hv_nmos[vth]
++ @n.xm1.nsg13_hv_nmos[gds]
 + @n.xm2.nsg13_hv_nmos[vth]
++ @n.xm2.nsg13_hv_nmos[gds]
 + @n.xm3.nsg13_hv_nmos[vth]
++ @n.xm3.nsg13_hv_nmos[gds]
 + @n.xm1.nsg13_hv_nmos[ad]
 
 .control 
-dc Vds 0 3 0.01 Vgs 0.5 3 0.5
+*dc Vds 0 3 0.01 Vgs 0.5 3 0.5
+dc Vds 0 3 0.01 
+*dc Vds 0 0.5 0.01 
 *dc Vds 0 0.5 0.01 temp 0 27 1
 write dc_hv_nmos.raw
+let G_M1 = @n.xm1.nsg13_hv_nmos[gds]
+let G_M2 = @n.xm2.nsg13_hv_nmos[gds]
+let G_M3 = @n.xm3.nsg13_hv_nmos[gds]
+let Ron_M1 = 1/G_M1
+let Ron_M2 = 1/G_M2
+let Ron_M3 = 1/G_M3
+let Vds = v(Vd)
+
 let Vth_M1 = @n.xm1.nsg13_hv_nmos[vth]
 let Id_M1 = i(VdM1)
-plot i(VdM1) i(VdM2) i(VdM3)
-plot Id_M1
-plot Vth_M1 Vth_M1*2
-print @n.xm1.nsg13_hv_nmos[vth] @n.xm2.nsg13_hv_nmos[vth] Vth_M1
+plot i(VdM1) i(VdM2) i(VdM3) vs Vds
+plot Ron_M1 Ron_M2 Ron_M3 vs Vds
+*plot Id_M1
+*plot Vth_M1 Vth_M1*2
+*print @n.xm1.nsg13_hv_nmos[vth] @n.xm2.nsg13_hv_nmos[vth] Vth_M1
 *print @n.xm2.nsg13_hv_nmos[vth]
 write test_nmos.raw
 
