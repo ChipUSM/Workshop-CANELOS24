@@ -1,0 +1,14 @@
+** sch_path: /home/designer/shared/TestIHP/Inversor_ejemplo.sch
+.subckt Inversor_ejemplo
+
+M1 out in GND GND sg13_hv_nmos l=0.22u w=5u ng=1 m=54
+M2 out in VDD VDD sg13_hv_pmos l=0.22u w=5u ng=1 m=54
+
+**** begin user architecture code
+
+
+
+**** end user architecture code
+.ends
+.GLOBAL GND
+.end
